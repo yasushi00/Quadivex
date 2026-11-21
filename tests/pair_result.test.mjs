@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {scorePair} from './pair_result.mjs';
+const A='QDX',B='Rust';
+const game=(winner,reason='square')=>({blackName:A,whiteName:B,winner,reason});
+assert.equal(scorePair(game(0),game(0),A,B).result,'A');
+assert.equal(scorePair(game(1),game(1),A,B).result,'B');
+assert.equal(scorePair(game(0),game(1),A,B).result,'draw');
+assert.equal(scorePair(game(1),game(0),A,B).result,'draw');
+assert.equal(scorePair(game(0),game(null,'maxPly'),A,B).result,'unfinished');
+assert.equal(scorePair(game(null,'noMove'),game(null,'maxPly'),A,B).result,'unfinished');
+assert.throws(()=>scorePair(game(0),game(1),A,A),/distinct/);
+console.log('PASS: two-game pair scoring: 2-0, 0-2, 1-1, unfinished');

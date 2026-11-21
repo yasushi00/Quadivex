@@ -1,0 +1,142 @@
+{
+  "format": "KJF",
+  "version": "1.0",
+  "header": {
+    "matchType": "two-game",
+    "rules": "jun-keishi",
+    "event": "QuadZenith engine comparison",
+    "site": "CLI",
+    "comment": "Opening 1, MAXPLY=12. maxPly/noMove records are interrupted, not draws."
+  },
+  "players": {
+    "p1": {
+      "name": "QuadZenith QZ1 A",
+      "type": "engine",
+      "engine": {
+        "version": "1.0.0",
+        "level": 8,
+        "parameters": {
+          "engineId": "QZ1",
+          "budgetUnit": "ms",
+          "budgetMs": null,
+          "nodeLimit": null,
+          "depthLimit": 2
+        }
+      }
+    },
+    "p2": {
+      "name": "Quadivex QDX1 B",
+      "type": "engine",
+      "engine": {
+        "version": "1.0.0",
+        "level": 8,
+        "parameters": {
+          "engineId": "QDX1",
+          "budgetUnit": "ms",
+          "budgetMs": null,
+          "nodeLimit": null,
+          "depthLimit": 2
+        }
+      }
+    }
+  },
+  "games": [
+    {
+      "gameNo": 1,
+      "black": "p1",
+      "white": "p2",
+      "initial": {
+        "first": "B",
+        "board": {
+          "B": [
+            "11",
+            "12",
+            "21",
+            "32"
+          ],
+          "W": [
+            "33",
+            "34",
+            "43",
+            "55"
+          ]
+        }
+      },
+      "moves": [
+        {
+          "color": "B",
+          "board": {
+            "B": [
+              "11",
+              "12",
+              "21",
+              "22"
+            ],
+            "W": [
+              "33",
+              "34",
+              "43",
+              "55"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "status": "finished",
+        "winner": "p1",
+        "reason": "square"
+      }
+    },
+    {
+      "gameNo": 2,
+      "black": "p1",
+      "white": "p2",
+      "initial": {
+        "first": "W",
+        "board": {
+          "B": [
+            "33",
+            "34",
+            "43",
+            "55"
+          ],
+          "W": [
+            "11",
+            "12",
+            "21",
+            "32"
+          ]
+        }
+      },
+      "moves": [
+        {
+          "color": "W",
+          "board": {
+            "B": [
+              "33",
+              "34",
+              "43",
+              "55"
+            ],
+            "W": [
+              "11",
+              "12",
+              "21",
+              "22"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "status": "finished",
+        "winner": "p2",
+        "reason": "square"
+      }
+    }
+  ],
+  "result": {
+    "status": "finished",
+    "winner": null,
+    "reason": "split"
+  }
+}

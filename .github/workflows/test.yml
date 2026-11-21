@@ -1,0 +1,43 @@
+name: Tests
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+  compatibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: quadivex
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          repository: yasushi00/keishi-kjf
+          ref: 8c538cf963f57c2430a75cf077231a48a757ad28
+          path: keishi-kjf
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          repository: yasushi00/keishi-replay
+          ref: 92a844e47369cef5f34f3a634ac604cb653df259
+          path: keishi-replay
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'jsonschema==4.26.0'
+      - run: npm run test:integration
+        working-directory: quadivex
