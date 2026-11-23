@@ -1,3 +1,4 @@
+import {bundledOpenings} from './bundled_openings.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {EnhancedKeishiAI} from '../enhanced_ai.js';
@@ -22,7 +23,7 @@ try {
 } finally {
   for(const k of keys) prior[k]===undefined?delete process.env[k]:process.env[k]=prior[k];
 }
-const data=JSON.parse(fs.readFileSync(new URL('./official_96_positions.json',import.meta.url),'utf8'));
+const data=bundledOpenings;
 const initial=data[0];
 const state={black_stones:initial.b,white_stones:initial.w,turn:0,lastB:-1,lastW:-1};
 const wasmBytes=fs.readFileSync(new URL('../enhanced_engine.wasm',import.meta.url));

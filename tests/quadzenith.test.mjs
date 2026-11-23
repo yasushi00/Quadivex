@@ -1,3 +1,4 @@
+import {bundledOpenings} from './bundled_openings.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {QuadZenithAI} from '../guadzenith_ai.js';
@@ -5,7 +6,7 @@ import {EnhancedKeishiAI} from '../enhanced_ai.js';
 import {Board,Move,Position} from '../keishi_rules.js';
 import {parseEngine} from './engine_registry.mjs';
 
-const input=JSON.parse(fs.readFileSync(new URL('./official_96_positions.json',import.meta.url),'utf8'));
+const input=bundledOpenings;
 const bytes=fs.readFileSync(new URL('../guadzenith_engine.wasm',import.meta.url));
 const qz=await QuadZenithAI.create({wasmBytes:bytes});
 const qdx=await EnhancedKeishiAI.create({wasmBytes:fs.readFileSync(new URL('../enhanced_engine.wasm',import.meta.url))});

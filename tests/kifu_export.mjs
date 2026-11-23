@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
+import {bundledOpenings} from './bundled_openings.mjs';
 import {formatStones,exportKifuCsv,exportStadiumCsv,exportStadiumPairCsv,ENGINE_NAME} from '../kifu_export.js';
 const bits=items=>items.reduce((mask,i)=>mask|(1<<i),0);
 const index=s=>(Number(s[1])-1)*5+Number(s[0])-1;
@@ -33,6 +33,5 @@ const capped={...g1,snapshots:g1.snapshots.slice(0,1),winner:null,reason:'maxPly
 assert.equal(exportStadiumPairCsv(capped,g2),exportStadiumCsv(capped.snapshots,capped));
 assert.ok(!exportStadiumCsv(history,{ply:1,drawReason:'maxPly'}).includes('DRAW'));
 assert.throws(()=>exportStadiumCsv(g1.snapshots,{winner:0,drawReason:'maxPly'}),/both WIN and cutoff/);
-const poolFile=new URL('./official_96_positions.json',import.meta.url);
-if(fs.existsSync(poolFile)){const pool=JSON.parse(fs.readFileSync(poolFile));const {readOfficialOrders}=await import("./opening_orders.mjs");const orders=readOfficialOrders(pool);assert.equal(orders.length,96);assert.deepEqual(orders[0],original);}
+assert.deepEqual(bundledOpenings[0].orders,original);
 console.log('PASS: coordinate identity, square WIN, second leg, partial CSV, no DRAW');

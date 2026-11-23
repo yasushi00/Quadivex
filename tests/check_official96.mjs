@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import {parseOpenings} from '../opening_csv.js';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 const csv = fs.readFileSync(new URL('../InitialPosition.csv',import.meta.url));
@@ -20,9 +22,8 @@ for(let i=0;i<96;i++) {
  list.push({b,w});
 }
 if(rows.slice(287).some(s=>s.trim()))throw Error('Unexpected content after 96 openings');
-const pool=JSON.parse(fs.readFileSync(new URL('./official_96_positions.json',import.meta.url)));
-if(pool.length!==96)throw Error(`Pool contains ${pool.length} openings, expected 96`);
-for(let i=0;i<96;i++)if(pool[i].b!==list[i].b || pool[i].w!==list[i].w)throw Error(`CSV/pool mismatch at ${i+1}`);
-console.log(`PASS: 96 original opening positions; CSV and evaluation pool match`);
+const pool=parseOpenings(csv.toString('utf8'),{expected:96,strict:true});
+assert.deepEqual(pool.map(({b,w})=>({b,w})),list);
+console.log('PASS: 96 bundled openings, independently checked masks and shared parser');
 console.log('CSV SHA256:',createHash('sha256').update(csv).digest('hex'));
-console.log('Opening #1:',list[0], 'Opening #96:',list[95]);
+console.log('UTF-8 BOM:',csv.subarray(0,3).equals(Buffer.from([0xef,0xbb,0xbf]))?'present':'absent');

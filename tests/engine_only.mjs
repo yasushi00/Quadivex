@@ -1,3 +1,4 @@
+import {bundledOpenings} from './bundled_openings.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {Board,Move,Position,DaiPunch,SQUARE_MASKS} from '../keishi_rules.js';
@@ -5,7 +6,7 @@ import {EnhancedKeishiAI} from '../enhanced_ai.js';
 import {exportKifuCsv} from '../kifu_export.js';
 const bytes=fs.readFileSync(new URL('../enhanced_engine.wasm',import.meta.url));
 const ai=await EnhancedKeishiAI.create({wasmBytes:bytes});
-const positions=JSON.parse(fs.readFileSync(new URL('./official_96_positions.json',import.meta.url),'utf8'));
+const positions=bundledOpenings;
 assert.equal(SQUARE_MASKS.length,50);
 let tests=0, played=0;
 for(let opening=0;opening<96;opening++){

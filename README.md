@@ -1,4 +1,4 @@
-# Quadivex — 形四エンジン・対戦環境 v1.0.0
+# Quadivex — 形四エンジン・対戦環境 v1.0.1
 
 **日本語** | [English](#english)
 
@@ -6,7 +6,7 @@
 
 固定初期配置から始める準形四をブラウザで遊び、Node.jsで思考エンジン同士を比較できるソフトウェアです。QuadZenith `QZ1`～`QZ3`、Quadivex `QDX1`～`QDX3` を同梱しています。旧WebKC Rustレベル7（`RUST7`）は、利用者がローカルに導入した場合に限り**CLI比較対戦専用**で利用できます。ブラウザ版では旧Rustエンジンを読み込みません。
 
-**バージョンの区別：** このソフトウェアのバージョンは **1.0.0** です。出力するKJF棋譜の形式バージョンは `format: "KJF"`、`version: "1.0"` です。思考エンジンのバイナリ処理は従来版から変更していません。Cソースのファイル名 `guadzenith_engine.c` は既存名のままです。
+**バージョンの区別：** このソフトウェアのバージョンは **1.0.1** です。出力するKJF棋譜の形式バージョンは `format: "KJF"`、`version: "1.0"` です。思考エンジンのバイナリ処理は従来版から変更していません。Cソースのファイル名 `guadzenith_engine.c` は既存名のままです。
 
 ## 1. 動作条件・Node.jsの導入（macOS）
 
@@ -26,26 +26,11 @@ npm --version
 
 Homebrewを未導入の場合は https://brew.sh/ から導入してください。または https://nodejs.org/en/download のmacOS向けインストーラを利用し、上記のコマンドでバージョンを確認します。テストスクリプトに外部npmパッケージへの依存はないため、同梱のテストを実行するだけなら **`npm install` は不要**です。
 
-## 2. WebKC由来の96初期配置の導入（WebKCの96配置で対戦する場合に必須）
+## 2. 同梱の96初期配置
 
-WebKC由来の `InitialPosition.csv` は第三者の外部データであり、このMIT配布物には**同梱しません**。ZIP展開後、次を実行します。
+WebKC由来の96初期配置を収録した [InitialPosition.csv](InitialPosition.csv) を、原権利者の許諾に基づきMITライセンスで配布しています。Web版とCLI版はこのCSVを直接読み込みます。展開後、追加の取得や変換なしで使えます。
 
-```bash
-cd Quadivex
-npm run setup:positions
-```
-
-取得元は `https://licheng.sakura.ne.jp/webkc/InitialPosition.csv` です。スクリプトが**96個の初期配置を検証**し、`InitialPosition.csv` と `tests/official_96_positions.json` を作成します。両ファイルはGit管理対象外です。導入後はローカルWeb版とCLI版の双方で利用できます。
-
-**手動・オフライン導入：** 取得URLが変更された場合、ダウンロードが制限されている場合、正当に取得した原本を持っている場合は、次のように指定します。
-
-```bash
-npm run setup:positions -- --from ./path/to/InitialPosition.csv
-```
-
-行数、座標、駒の重複、初期配置の重複などを検証し、不正なCSVは導入しません。CSVを手動で入れ替えた場合は `node scripts/build_official_positions.mjs` でCLI用JSONを再生成できます。**生成した外部データをGitHubにcommitしないでください。**
-
-動作確認用に独自作成した `examples/demo_positions.csv` を同梱しています。これは**WebKC由来の96初期配置ではありません**。
+`npm run test:positions` で96件の形式、座標、駒と配置の重複、および初期状態に正方形がないことを検証できます。動作確認用の独自データは `examples/demo_positions.csv` にあります。
 
 ## 3. ブラウザで対戦する
 
@@ -53,7 +38,7 @@ npm run setup:positions -- --from ./path/to/InitialPosition.csv
 python3 -m http.server 8000
 ```
 
-[GitHub Pages](https://yasushi00.github.io/Quadivex/) ではランダム初期配置で対局できます。ローカルではブラウザで http://localhost:8000/ を開き、`QDX1`～`QDX3` または `QZ1`～`QZ3`、自分の色、WebKC由来またはランダム初期配置を選択します。「**棋譜CSV出力**」「**KJF v1.0出力**」から棋譜をローカル保存できます。サーバーへの送信は行いません。ブラウザでの対局は `header.matchType="single"` として記録し、途中の対局は `playing` とします。Web画面は独立実装であり、元WebKCのUIを同梱していません。
+[GitHub Pages](https://yasushi00.github.io/Quadivex/) では同梱の96初期配置とランダム初期配置から選んで対局できます。ローカルではブラウザで http://localhost:8000/ を開き、`QDX1`～`QDX3` または `QZ1`～`QZ3`、自分の色、WebKC由来またはランダム初期配置を選択します。「**棋譜CSV出力**」「**KJF v1.0出力**」から棋譜をローカル保存できます。サーバーへの送信は行いません。ブラウザでの対局は `header.matchType="single"` として記録し、途中の対局は `playing` とします。Web画面は独立実装であり、元WebKCのUIを同梱していません。
 
 ## 4. CLIでエンジン同士を対戦させる
 
@@ -93,7 +78,7 @@ A=QZ1 B=RUST7 STARTS=96 BUDGET=450 MAXPLY=80 npm run test:match
 npm run setup:rust7 -- --from ./path/to/folder-with-rust-files
 ```
 
-指定ディレクトリには `webkc_rust.js` と `webkc_rust_bg.wasm` の両方が必要です。`RUST7` は**Node.js CLI対戦専用**です。権利者の許諾なく元のRustバイナリやWebKCの96配置を公開Webサイトへ配置しないでください。これらの外部ファイルには本リポジトリのMITライセンスを適用しません。
+指定ディレクトリには `webkc_rust.js` と `webkc_rust_bg.wasm` の両方が必要です。`RUST7` は**Node.js CLI対戦専用**です。元のRustバイナリには原権利者の利用条件が適用されます。
 
 ### CLIパラメータ一覧
 
@@ -154,11 +139,11 @@ JavaScriptシリアライザはKJF仕様に合わせて実装しています。�
 ```bash
 npm test                 # MIT配布物だけで行うオフラインテスト。GitHub Actionsでも実行
 npm run test:kjf         # KJF形式・第2局・中断時のテスト
-npm run test:quadzenith  # QZ/QDXをWebKCの96配置で検証（setup:positionsが必要）
-npm run test:full        # WebKCの96配置を使う全体テスト（setup:positionsが必要）
+npm run test:quadzenith  # QZ/QDXをWebKCの96配置で検証
+npm run test:full        # WebKCの96配置を使う全体テスト
 ```
 
-WebKCの96配置によるテストはローカル導入済みデータを使用します。`npm run test:rust7` の実行には追加で `npm run setup:rust7` が必要です。
+WebKCの96配置によるテストは同梱CSVを使用します。`npm run test:rust7` の実行には追加で `npm run setup:rust7` が必要です。
 
 ## 7. C/WASMエンジンの再ビルド（任意）
 
@@ -171,7 +156,7 @@ brew install llvm
   -o guadzenith_engine.wasm guadzenith_engine.c
 ```
 
-本v1.0.0パッケージでは `guadzenith_engine.c`、`enhanced_engine.c`、および対応するコンパイル済みWASMを変更していません。
+本v1.0.1パッケージでは `guadzenith_engine.c`、`enhanced_engine.c`、および対応するコンパイル済みWASMを変更していません。
 
 ### 公開前の仕様補足
 
@@ -183,24 +168,19 @@ brew install llvm
 
 ## 8. GitHub での公開
 
-GitHub Pages は `main` のルートを使用します。公開前にGitのステージを確認し、WebKC由来のデータとバイナリ、テスト生成物を除外します。必須テストおよび Actions の成功後に注釈付きタグとリリースを作成します。
+GitHub Pages は `main` のルートを使用します。公開前にGitのステージを確認し、同梱CSVが含まれ、元WebKCのRust/WASMとテスト生成物が除外されていることを確認します。必須テストおよび Actions の成功後に注釈付きタグとリリースを作成します。
 
 ## 9. 生成AIの利用
 
 Quadivex（QDX・QZ）は、**ChatGPTおよびGeminiを含む生成AIツールを開発支援に利用して作成**しています。設計、コード統合、テスト、公開管理はプロジェクトの管理者が行います。AI支援によるコードも、それ以外のコードと同じく、コードレビュー、権利確認、セキュリティ確認の対象です。
 
-## 10. 第三者の素材と配布対象の区別
+## 10. 第三者の素材
 
-- 本リポジトリの**MITライセンス**は、導入補助スクリプトを含む本プロジェクト独自のコードに適用され、ダウンロードした外部ファイルには適用されません。
-- `npm run setup:positions` と `npm run setup:rust7` は**利用者のローカル環境で動く導入スクリプト**です。元サイトからの取得、または利用者が提供したファイルの導入のみを行い、外部ファイルをアップロード・ミラー公開・commitしません。
-- 元データの権利は各権利者に留保されます。ダウンロードURLが公開されていることは、再公開や再配布の許諾を意味しません。特に公開サーバーや商用環境で使用する場合は利用条件を確認し、必要な許諾を得てください。
-- 元の96初期配置はローカルで起動したWeb画面でも利用できます。元Rust/WASMは本配布物では**CLI専用**です。
-- `.gitignore` で `InitialPosition.csv`、`tests/official_96_positions.json`、`legacy_rust/` を除外しています。公開前に `git status` で再確認してください。
-- 元サイトのURLが利用できなくなった場合は、適法に入手した原本を `--from` で手動導入できます。
+`npm run setup:rust7` は元WebKCのRust/WASMをCLI比較用にローカルの `legacy_rust/` に導入します。上流のファイルには原権利者の利用条件が適用されます。
 
 ## 11. ライセンスと参考URL
 
-本プロジェクト独自のコードは **MIT License** です。Copyright (c) 2026 Yasushi Ishizuka。詳しくは `LICENSE` を参照してください。元WebKCのコード、元Rustファイル、WebKC由来の96初期配置は**このMIT配布物に含まれません**。出典と第三者の権利については `NOTICE.md` を参照してください。
+本プロジェクト独自のコードは **MIT License** です。Copyright (c) 2026 Yasushi Ishizuka。詳しくは `LICENSE` を参照してください。WebKC由来の96初期配置にも、原権利者の許諾に基づきMIT Licenseが適用されます。出典と第三者の権利については `NOTICE.md` を参照してください。
 
 - **WebKC：** https://licheng.sakura.ne.jp/webkc/
 - **形四・形四スタジアム原典：** https://dnjiro.hatenablog.com/entry/keisi#p7
@@ -211,13 +191,13 @@ Quadivex（QDX・QZ）は、**ChatGPTおよびGeminiを含む生成AIツール�
 
 <a id="english"></a>
 
-# Quadivex — Keishi engine suite 1.0.0
+# Quadivex — Keishi engine suite 1.0.1
 
 [日本語](#日本語) | **English**
 
 A browser-based Jun-Keishi game played from a preset opening and Node.js engine-versus-engine test suite. Engines included: QuadZenith `QZ1..QZ3`, Quadivex `QDX1..QDX3`. Optional legacy WebKC Rust Level 7 (`RUST7`) is available **for CLI comparison only** after local setup. The browser does not load Rust.
 
-**Version separation:** this software distribution is **1.0.0**, while the exported Keishi JSON Format (KJF) record uses `format: "KJF"` and `version: "1.0"`. The source engines retain their existing binary logic, including the exact spelling `guadzenith_engine.c`.
+**Version separation:** this software distribution is **1.0.1**, while the exported Keishi JSON Format (KJF) record uses `format: "KJF"` and `version: "1.0"`. The source engines retain their existing binary logic, including the exact spelling `guadzenith_engine.c`.
 
 ## 1. Requirements / Node.js installation (macOS)
 
@@ -237,26 +217,11 @@ npm --version
 
 If Homebrew is not installed, install it from https://brew.sh/ before running `brew install node`. Alternatively, download the macOS installer from https://nodejs.org/en/download, and then verify the same two version commands. `npm install` is **not required** for the supplied Node-only test scripts because they use no external npm packages.
 
-## 2. Obtain original 96 positions (required for the WebKC 96 matches)
+## 2. Bundled 96 openings
 
-The original `InitialPosition.csv` is an **external asset**; this MIT source release does not redistribute it. After extracting this archive:
+[InitialPosition.csv](InitialPosition.csv) contains the 96 WebKC openings, distributed under the MIT License with permission from the original rights holder. The browser and CLI read this CSV directly after extraction.
 
-```bash
-cd Quadivex
-npm run setup:positions
-```
-
-This uses the upstream URL `https://licheng.sakura.ne.jp/webkc/InitialPosition.csv` and validates **all 96 openings** before creating `InitialPosition.csv` plus `tests/official_96_positions.json`. Both files are ignored by Git. The same installed `InitialPosition.csv` is loaded by the **local browser app** served through `python3 -m http.server` and by the CLI.
-
-**Manual/offline alternative** (if the upstream URL changes, downloading is restricted, or you already have an authorized original copy):
-
-```bash
-npm run setup:positions -- --from ./path/to/InitialPosition.csv
-```
-
-The script rejects malformed data (incorrect row count, invalid coordinates, overlaps, duplicates) rather than silently installing it. To regenerate the CLI JSON after manually replacing the local CSV, run `node scripts/build_official_positions.mjs`. Do **not** commit either resulting file to GitHub.
-
-A small **independently composed demo fixture** is included as `examples/demo_positions.csv` for offline smoke tests. It is not the WebKC 96 openings.
+Run `npm run test:positions` to check the format, coordinates, piece overlaps, duplicate openings, and absence of completed squares. The independently composed smoke-test fixture is in `examples/demo_positions.csv`.
 
 ## 3. Browser play
 
@@ -264,7 +229,7 @@ A small **independently composed demo fixture** is included as `examples/demo_po
 python3 -m http.server 8000
 ```
 
-Play with random openings on [GitHub Pages](https://yasushi00.github.io/Quadivex/). For local play, open http://localhost:8000/. Choose `QDX1..QDX3` or `QZ1..QZ3`, your side, and a WebKC opening or a random opening. The buttons **棋譜CSV出力** and **KJF v1.0出力** save the current game, without requesting data from a server. A browser game is `header.matchType="single"`; a live unfinished game is `playing`. The interface is an independently written implementation and does **not** bundle the original WebKC UI.
+Play any of the 96 bundled openings or a random opening on [GitHub Pages](https://yasushi00.github.io/Quadivex/). For local play, open http://localhost:8000/. Choose `QDX1..QDX3` or `QZ1..QZ3`, your side, and a WebKC opening or a random opening. The buttons **棋譜CSV出力** and **KJF v1.0出力** save the current game, without requesting data from a server. A browser game is `header.matchType="single"`; a live unfinished game is `playing`. The interface is an independently written implementation and does **not** bundle the original WebKC UI.
 
 ## 4. CLI engine comparisons
 
@@ -304,7 +269,7 @@ The script attempts to fetch the original `webkc_rust.js` and `webkc_rust_bg.was
 npm run setup:rust7 -- --from ./path/to/folder-with-rust-files
 ```
 
-That folder must contain both `webkc_rust.js` and `webkc_rust_bg.wasm`. `RUST7` runs **only in Node.js CLI test matches**; the local browser game deliberately offers QZ1–3 and QDX1–3 only. Do **not** place original Rust binaries or original position data on a publicly accessible hosted website without the necessary permission. Neither original artifact is redistributed or relicensed by this repository.
+That folder must contain both `webkc_rust.js` and `webkc_rust_bg.wasm`. `RUST7` runs **only in Node.js CLI test matches**; the local browser game deliberately offers QZ1–3 and QDX1–3 only. The original Rust files are governed by the original rights holder’s terms.
 
 ### CLI parameters
 
@@ -363,11 +328,11 @@ The JavaScript serializer is developed to follow that specification. Its local s
 ```bash
 npm test              # MIT-only, offline: KJF, rules, demo QZ vs QDX; also used in GitHub Actions
 npm run test:kjf      # KJF format + second-leg + interruption tests
-npm run test:quadzenith  # Full 96-opening QZ/QDX test (requires setup:positions)
-npm run test:full      # Full original 96-opening engine tests (requires setup:positions)
+npm run test:quadzenith  # Full 96-opening QZ/QDX test
+npm run test:full      # Full original 96-opening engine tests
 ```
 
-The full checks require the locally installed WebKC data. `npm run test:rust7` additionally requires `npm run setup:rust7`.
+The full checks use the bundled WebKC CSV. `npm run test:rust7` additionally requires `npm run setup:rust7`.
 
 ## 7. Build the C/WASM engines (optional)
 
@@ -380,7 +345,7 @@ brew install llvm
   -o guadzenith_engine.wasm guadzenith_engine.c
 ```
 
-**Neither `guadzenith_engine.c` nor `enhanced_engine.c`, nor either precompiled WASM, was modified for this 1.0.0 package.**
+**Neither `guadzenith_engine.c` nor `enhanced_engine.c`, nor either precompiled WASM, was modified for this 1.0.1 package.**
 
 ### Release behavior
 
@@ -392,24 +357,19 @@ brew install llvm
 
 ## 8. GitHub publication
 
-GitHub Pages serves the root of `main`. Review the staged files before publishing and exclude WebKC data, binaries and generated test files. Create the annotated tag and release after the required tests and Actions succeed.
+GitHub Pages serves the root of `main`. Review the staged files before publishing and include the bundled CSV and exclude the original WebKC Rust/WASM and generated test files. Create the annotated tag and release after the required tests and Actions succeed.
 
 ## 9. Generative AI usage
 
 Quadivex (QDX and QZ engines) was developed with assistance from generative AI tools, including **ChatGPT and Gemini**. The project maintainer performs project design, code integration, testing and release management. AI-assisted contributions are subject to the same code-review, rights and security checks as other contributions.
 
-## 10. Third-party assets and distribution boundary
+## 10. Third-party assets
 
-- The **MIT license** in this repository applies to original project code, including the installation helper scripts, **not** to downloaded upstream files.
-- `npm run setup:positions` and `npm run setup:rust7` are **locally executed installers**, not redistributors. They fetch from the original site or install from files supplied by the user; they do not upload, mirror, or commit the originals.
-- The upstream rights holders retain any applicable rights. Public availability of a download URL does **not** establish a right to rehost, republish or bundle upstream files. Verify the upstream site's terms and obtain permission when needed, especially for hosted or commercial deployments.
-- The original 96 positions are loaded by the locally served browser UI. The original Rust/WASM is **CLI-only** in this distribution.
-- `.gitignore` excludes `InitialPosition.csv`, `tests/official_96_positions.json`, and the `legacy_rust/` directory. Verify `git status` before publishing.
-- If the upstream URLs become unavailable, the `--from` options allow an authorized manually acquired copy without changing code.
+`npm run setup:rust7` installs the original WebKC Rust/WASM into the local `legacy_rust/` directory for CLI comparisons. Those upstream files are governed by the original rights holder's terms.
 
 ## 11. License and references
 
-Code authored for this project is MIT-licensed, Copyright (c) 2026 Yasushi Ishizuka (`LICENSE`). WebKC source, original Rust files and the WebKC 96-position data are **not** part of this MIT distribution. See `NOTICE.md` for provenance and third-party rights.
+Code authored for this project is MIT-licensed, Copyright (c) 2026 Yasushi Ishizuka (`LICENSE`). The WebKC 96-position data is also distributed under the MIT License with permission from the original rights holder. See `NOTICE.md` for provenance and third-party rights.
 
 - **WebKC:** https://licheng.sakura.ne.jp/webkc/
 - **Original Keishi / Stadium description:** https://dnjiro.hatenablog.com/entry/keisi#p7

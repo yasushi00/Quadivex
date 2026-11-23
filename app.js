@@ -10,7 +10,7 @@ let worker,openingData=[],opening,session,busy=false,selected=null;
 const fallback=()=>{const r=generateRandomOpening();return {b:r.board.black_stones,w:r.board.white_stones,orders:r.stoneOrders};};
 const notice=s=>$('notice').textContent=s;
 function stopWorker(){worker?.terminate();worker=null;busy=false;}
-async function loadOpenings(){try{const res=await fetch('./InitialPosition.csv',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);openingData=parseOpenings(await res.text(),{expected:96,strict:true});openingData.forEach((_,i)=>{const opt=document.createElement('option');opt.value=String(i);opt.textContent=`WebKC 96番勝負 ${i+1}番`;$('opening').append(opt);});$('opening').value='0';}catch(e){notice('WebKCの96配置は未導入です。READMEの手順で配置できます。');}}
+async function loadOpenings(){try{const res=await fetch('./InitialPosition.csv',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);openingData=parseOpenings(await res.text(),{expected:96,strict:true});openingData.forEach((_,i)=>{const opt=document.createElement('option');opt.value=String(i);opt.textContent=`WebKC 96番勝負 ${i+1}番`;$('opening').append(opt);});$('opening').value='0';}catch(e){notice('同梱の96初期配置を読み込めませんでした。ランダム初期配置で対局できます。');}}
 function preview(regenerate=false){stopWorker();if(regenerate||!opening){const idx=$('opening').value;opening=idx==='random'?fallback():openingData[Number(idx)]??fallback();}session=new MatchSession(opening,Number($('side').value),$('engine').value);selected=null;render();}
 const pos=i=>new Position(i%5,Math.floor(i/5));
 const live=()=>session.cursor===session.history.length-1;
@@ -30,6 +30,6 @@ $('next').onclick=()=>{if(!live()){session.cursor++;selected=null;render();if(li
 $('resign').onclick=()=>{if(session.active){stopWorker();session.end('resignation',session.side^1);render();}};
 const names=()=>({blackName:session.side===0?'Human':session.engine,whiteName:session.side===1?'Human':session.engine});
 $('saveCsv').onclick=()=>{try{const g=session.exportGame();if(g.reason!=='square'&&g.reason!=='playing')notice('CSVには終局理由・勝敗を保存できません。完全な記録はKJFを保存してください。');downloadKifuCsv(g.snapshots,g.ply,`keishiscore_${Date.now()}.csv`,{...names(),stoneOrders:g.stoneOrders,winner:g.reason==='square'?g.winner:null});}catch(e){notice(String(e));}};
-$('saveKjf').onclick=()=>{try{const player={name:session.engine,type:'engine',engine:{version:'1.0.0',level:7+Number(session.engine.at(-1)),parameters:{engineId:session.engine}}},human={name:'Human',type:'human'};const players=session.side===0?{p1:human,p2:player}:{p1:player,p2:human};const doc=exportKjf({first:session.exportGame(),players,matchType:'single',header:matchHeader(session.startedAt,session.endedAt,{event:'Quadivex Web match'})});downloadKjf(doc,`keishi_${Date.now()}.kjf.json`);}catch(e){notice(String(e));}};
-if(location.hostname!=='yasushi00.github.io')await loadOpenings();
+$('saveKjf').onclick=()=>{try{const player={name:session.engine,type:'engine',engine:{version:'1.0.1',level:7+Number(session.engine.at(-1)),parameters:{engineId:session.engine}}},human={name:'Human',type:'human'};const players=session.side===0?{p1:human,p2:player}:{p1:player,p2:human};const doc=exportKjf({first:session.exportGame(),players,matchType:'single',header:matchHeader(session.startedAt,session.endedAt,{event:'Quadivex Web match'})});downloadKjf(doc,`keishi_${Date.now()}.kjf.json`);}catch(e){notice(String(e));}};
+await loadOpenings();
 preview(true);

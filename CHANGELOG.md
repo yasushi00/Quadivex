@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+- Bundle the 96 WebKC openings in `InitialPosition.csv` under the MIT License with permission from the original rights holder.
+- Load the bundled CSV directly in the browser, including GitHub Pages, and in the CLI.
+- Validate all bundled openings in the default test suite.
+
 ## 1.0.0 (2026-11-21)
 
 - Independent Quadivex browser interface and CLI comparisons.

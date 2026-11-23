@@ -27,9 +27,12 @@ const limits=readQdxLimits(100);
 const nameA=`${specA.name} A`,nameB=`${specB.name} B`;
 const output=path.resolve(process.env.OUTPUT_DIR??path.join(here,`results_${specA.id.toLowerCase()}_vs_${specB.id.toLowerCase()}`));
 fs.mkdirSync(output,{recursive:true});
-const positionCsv=path.resolve(process.env.POSITION_FILE??'InitialPosition.csv');
-if (!fs.existsSync(positionCsv)) throw Error(`Initial positions not installed: ${positionCsv}. See README.md setup section.`);
-const pool=parseOpenings(fs.readFileSync(positionCsv,'utf8'));
+const customCsv=process.env.POSITION_FILE;
+const positionCsv=customCsv===undefined
+    ? fileURLToPath(new URL('../InitialPosition.csv',import.meta.url))
+    : path.resolve(customCsv);
+const pool=parseOpenings(fs.readFileSync(positionCsv,'utf8'),
+    customCsv===undefined ? {expected:96,strict:true} : undefined);
 const orders=pool.map(p=>p.orders);
 if(starts>pool.length)throw Error(`STARTS=${starts} exceeds ${pool.length} positions in ${positionCsv}`);
 const a=await createEngine(specA),b=await createEngine(specB);
@@ -72,8 +75,8 @@ try {
         fs.writeFileSync(path.join(output,filename),second?exportStadiumPairCsv(first,second):exportStadiumCsv(first.snapshots,{...first,winner:first.reason==='square'?first.winner:null}),'utf8');
         const kjf=exportKjf({first,second,matchType:'two-game',
           players:{
-            p1:{name:nameA,type:'engine',engine:specA.family==='rust'?{level:7}:{version:'1.0.0',level:specA.level,parameters:{engineId:specA.id,budgetUnit:'ms',budgetMs:limits.budgetMs,nodeLimit:limits.nodeLimit||null,depthLimit:limits.depthLimit||null}}},
-            p2:{name:nameB,type:'engine',engine:specB.family==='rust'?{level:7}:{version:'1.0.0',level:specB.level,parameters:{engineId:specB.id,budgetUnit:'ms',budgetMs:limits.budgetMs,nodeLimit:limits.nodeLimit||null,depthLimit:limits.depthLimit||null}}}},
+            p1:{name:nameA,type:'engine',engine:specA.family==='rust'?{level:7}:{version:'1.0.1',level:specA.level,parameters:{engineId:specA.id,budgetUnit:'ms',budgetMs:limits.budgetMs,nodeLimit:limits.nodeLimit||null,depthLimit:limits.depthLimit||null}}},
+            p2:{name:nameB,type:'engine',engine:specB.family==='rust'?{level:7}:{version:'1.0.1',level:specB.level,parameters:{engineId:specB.id,budgetUnit:'ms',budgetMs:limits.budgetMs,nodeLimit:limits.nodeLimit||null,depthLimit:limits.depthLimit||null}}}},
           header:matchHeader(startedAt,second||!finished(first)?new Date().toISOString():undefined,{event:'Quadivex engine comparison',comment:`CLI, MODE=${mode}, Opening ${i+1}, MAXPLY=${maxPly}. maxPly/noMove records are interrupted, not draws.`})});
         fs.writeFileSync(path.join(output,`kjf_${String(i+1).padStart(3,'0')}.json`),JSON.stringify(kjf,null,2)+'\n','utf8');
         if(first.reason!=='square'||(second&&second.reason!=='square'))console.warn(`Opening ${i+1}: CSV is partial; see KJF for all results and legs.`);

@@ -1,6 +1,6 @@
 {
   "name": "quadivex",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,9 +17,8 @@
     "test:pairs": "node tests/pair_result.test.mjs",
     "test:kjf": "node tests/kjf_output.test.mjs",
     "test:smoke": "A=QZ1 B=QDX1 POSITION_FILE=examples/demo_positions.csv STARTS=1 DEPTH=2 MAXPLY=12 npm run test:match",
-    "test:core": "npm run test:kjf && npm run test:kifu && npm run test:random && npm run test:pairs && node tests/release.test.mjs && npm run test:smoke",
+    "test:core": "npm run test:positions && npm run test:kjf && npm run test:kifu && npm run test:random && npm run test:pairs && node tests/release.test.mjs && npm run test:smoke",
     "test:full": "npm run test:quadzenith && npm run test:positions && npm run test:kifu && npm run test:engine && npm run test:limits && npm run test:selfplay",
-    "setup:positions": "node scripts/install_official_positions.mjs",
     "setup:rust7": "node scripts/install_legacy_rust.mjs",
     "test:integration": "node tests/integration.mjs"
   },
