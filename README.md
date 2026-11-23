@@ -1,4 +1,4 @@
-# Quadivex — 形四エンジン・対戦環境 v1.0.1
+# Quadivex — 形四エンジン・対戦環境 v1.0.2
 
 **日本語** | [English](#english)
 
@@ -6,7 +6,7 @@
 
 固定初期配置から始める準形四をブラウザで遊び、Node.jsで思考エンジン同士を比較できるソフトウェアです。QuadZenith `QZ1`～`QZ3`、Quadivex `QDX1`～`QDX3` を同梱しています。旧WebKC Rustレベル7（`RUST7`）は、利用者がローカルに導入した場合に限り**CLI比較対戦専用**で利用できます。ブラウザ版では旧Rustエンジンを読み込みません。
 
-**バージョンの区別：** このソフトウェアのバージョンは **1.0.1** です。出力するKJF棋譜の形式バージョンは `format: "KJF"`、`version: "1.0"` です。思考エンジンのバイナリ処理は従来版から変更していません。Cソースのファイル名 `guadzenith_engine.c` は既存名のままです。
+**バージョンの区別：** このソフトウェアのバージョンは **1.0.2** です。出力するKJF棋譜の形式バージョンは `format: "KJF"`、`version: "1.0"` です。思考エンジンのバイナリ処理は従来版から変更していません。Cソースのファイル名 `guadzenith_engine.c` は既存名のままです。
 
 ## 1. 動作条件・Node.jsの導入（macOS）
 
@@ -38,7 +38,11 @@ WebKC由来の96初期配置を収録した [InitialPosition.csv](InitialPositio
 python3 -m http.server 8000
 ```
 
-[GitHub Pages](https://yasushi00.github.io/Quadivex/) では同梱の96初期配置とランダム初期配置から選んで対局できます。ローカルではブラウザで http://localhost:8000/ を開き、`QDX1`～`QDX3` または `QZ1`～`QZ3`、自分の色、WebKC由来またはランダム初期配置を選択します。「**棋譜CSV出力**」「**KJF v1.0出力**」から棋譜をローカル保存できます。サーバーへの送信は行いません。ブラウザでの対局は `header.matchType="single"` として記録し、途中の対局は `playing` とします。Web画面は独立実装であり、元WebKCのUIを同梱していません。
+[GitHub Pages](https://yasushi00.github.io/Quadivex/) とローカル（http://localhost:8000/）の両方で、`QDX1`～`QDX3` または `QZ1`～`QZ3`、自分の色、同梱の96初期配置またはランダム初期配置を選べます。Web版は `InitialPosition.csv` を相対パスで読み込みます。
+
+5×5の盤面はWebKC系v1.5.3を参考に独立実装したCanvas 2Dです。マウスやタッチで石と移動先を選べます。キーボードではTabで盤面に入り、矢印キーでマスを移動し、Enterまたはスペースで選択します。黒白それぞれの直前の着手と大パンチを盤面に表示し、正方形完成時は勝者の4マスをピンクにします。「戻る」は原則として直前の自分の手番まで巻き戻します。「進む」で元の棋譜を1手ずつ確認でき、自分の手番で新たに指すと、その先の旧棋譜を置き換えて対局を続けます。
+
+「**棋譜CSV出力**」「**KJF v1.0出力**」は履歴表示中も対局の全手をローカルに保存します。ブラウザ対局は `header.matchType="single"` として記録し、進行中の対局は `playing` とします。
 
 ## 4. CLIでエンジン同士を対戦させる
 
@@ -156,11 +160,11 @@ brew install llvm
   -o guadzenith_engine.wasm guadzenith_engine.c
 ```
 
-本v1.0.1パッケージでは `guadzenith_engine.c`、`enhanced_engine.c`、および対応するコンパイル済みWASMを変更していません。
+本v1.0.2パッケージでは `guadzenith_engine.c`、`enhanced_engine.c`、および対応するコンパイル済みWASMを変更していません。
 
 ### 公開前の仕様補足
 
-- Web版は1000手で警告して中断し、単局引き分けとはしません。対局中は設定を固定し、履歴移動中は対局を一時停止します。最新手に戻ると再開し、棋譜出力は表示位置にかかわらず全対局を対象とします。
+- Web版は1000手で警告して中断し、単局引き分けとはしません。対局中は設定を固定します。巻き戻すとCPUの思考を停止し、新たな着手に対してCPUが応手します。棋譜出力は表示位置にかかわらず、確定している全手を対象とします。
 - 禁手負けの判定は、相手に次の合法着手で正方形を完成する手があり、禁止された戻し手なら全ての即勝ちを防げる一方、他に合法な回避手（自分の即勝ちを含む）がない場合とします。原典の記述を実装に落とし込むための Quadivex の判定方針です。C/WASMの探索自体は変更しません。
 - 対局日時はUTCのRFC 3339形式（`date`もUTC日付）、`site`は `Quadivex`。終了前は `endedAt` を省略します。
 - CSV互換は棋譜書式の互換であり、共有 `keishiscore.csv` を使う外部プログラム逐次対戦機構は未実装です。
@@ -191,13 +195,13 @@ Quadivex（QDX・QZ）は、**ChatGPTおよびGeminiを含む生成AIツール�
 
 <a id="english"></a>
 
-# Quadivex — Keishi engine suite 1.0.1
+# Quadivex — Keishi engine suite 1.0.2
 
 [日本語](#日本語) | **English**
 
 A browser-based Jun-Keishi game played from a preset opening and Node.js engine-versus-engine test suite. Engines included: QuadZenith `QZ1..QZ3`, Quadivex `QDX1..QDX3`. Optional legacy WebKC Rust Level 7 (`RUST7`) is available **for CLI comparison only** after local setup. The browser does not load Rust.
 
-**Version separation:** this software distribution is **1.0.1**, while the exported Keishi JSON Format (KJF) record uses `format: "KJF"` and `version: "1.0"`. The source engines retain their existing binary logic, including the exact spelling `guadzenith_engine.c`.
+**Version separation:** this software distribution is **1.0.2**, while the exported Keishi JSON Format (KJF) record uses `format: "KJF"` and `version: "1.0"`. The source engines retain their existing binary logic, including the exact spelling `guadzenith_engine.c`.
 
 ## 1. Requirements / Node.js installation (macOS)
 
@@ -229,7 +233,11 @@ Run `npm run test:positions` to check the format, coordinates, piece overlaps, d
 python3 -m http.server 8000
 ```
 
-Play any of the 96 bundled openings or a random opening on [GitHub Pages](https://yasushi00.github.io/Quadivex/). For local play, open http://localhost:8000/. Choose `QDX1..QDX3` or `QZ1..QZ3`, your side, and a WebKC opening or a random opening. The buttons **棋譜CSV出力** and **KJF v1.0出力** save the current game, without requesting data from a server. A browser game is `header.matchType="single"`; a live unfinished game is `playing`. The interface is an independently written implementation and does **not** bundle the original WebKC UI.
+On [GitHub Pages](https://yasushi00.github.io/Quadivex/) or locally at http://localhost:8000/, choose `QDX1..QDX3` or `QZ1..QZ3`, your side, and one of the 96 bundled openings or a random opening. The browser loads `InitialPosition.csv` using a relative URL.
+
+The 5×5 board is an independent Canvas 2D implementation based on the WebKC-style v1.5.3 interface. Select a stone and its destination with a mouse or touch. With a keyboard, use Tab to enter the board, the arrow keys to navigate, and Enter or Space to select. The board shows both sides' most recent moves and DaiPunch positions. A completed square highlights the winner's four cells in pink. **戻る** rewinds to your previous turn or the initial position. **進む** shows the original moves one at a time. Playing a move on your turn replaces the rest of the original game record and continues play.
+
+The **棋譜CSV出力** and **KJF v1.0出力** buttons save the full game locally, including when reviewing history. Browser games use `header.matchType="single"`, and unfinished games use `playing`.
 
 ## 4. CLI engine comparisons
 
@@ -345,11 +353,11 @@ brew install llvm
   -o guadzenith_engine.wasm guadzenith_engine.c
 ```
 
-**Neither `guadzenith_engine.c` nor `enhanced_engine.c`, nor either precompiled WASM, was modified for this 1.0.1 package.**
+**Neither `guadzenith_engine.c` nor `enhanced_engine.c`, nor either precompiled WASM, was modified for this 1.0.2 package.**
 
 ### Release behavior
 
-- Web games stop with a warning at 1,000 plies, as interruptions, not draws. Settings are locked during play. History browsing pauses play; returning to the latest move resumes it. Exports always contain the full game.
+- Web games stop with a warning at 1,000 plies, as interruptions, not draws. Settings are locked during play. Rewinding cancels any CPU search. The CPU responds after you make a new move. Exports contain all recorded moves regardless of the displayed position.
 - Prohibited-return loss is adjudicated when the opponent has an immediate legal square, reversing the prohibited move would prevent every immediate square, and no legal response (including a winning move) does so. This is Quadivex's conservative operational interpretation of the original rule. The C/WASM search engines are unchanged.
 - Actual times use RFC 3339 UTC (`date` is the UTC date); `site` is `Quadivex`. `endedAt` is omitted while playing.
 - Compatibility concerns the Stadium record format, not the shared-file external match protocol.

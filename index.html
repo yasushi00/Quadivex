@@ -1,12 +1,19 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>Quadivex — 形四</title><link rel="stylesheet" href="app.css"></head>
-<body><header><h1>形四（Keishi）</h1><p><strong>Quadivex 1.0.1</strong> ／ 思考エンジン：Quadivex・QuadZenith</p></header>
-<main><div id="board" aria-label="5×5の形四盤"></div>
+<body><header><h1>形四（Keishi）</h1><p><strong>Quadivex 1.0.2</strong> ／ 思考エンジン：Quadivex・QuadZenith</p></header>
+<main>
+<div class="board-area">
+  <div class="board-surface">
+    <canvas id="board" width="500" height="500" aria-hidden="true"></canvas>
+    <div id="board-grid" role="grid" aria-label="5×5の形四盤" aria-describedby="board-help"></div>
+  </div>
+  <p id="board-help">矢印キーでマスを移動し、Enterまたはスペースで石と移動先を選択できます。</p>
+</div>
 <section class="controls"><label for="side">あなたの手番</label><select id="side"><option value="0">黒（先手）</option><option value="1">白（後手）</option></select>
 <label for="engine">思考エンジン</label><select id="engine"><option>QDX1</option><option>QDX2</option><option>QDX3</option><option>QZ1</option><option>QZ2</option><option>QZ3</option></select>
 <label for="opening">初期配置</label><select id="opening"><option value="random">ランダム</option></select>
 <div class="actions"><button id="refresh">ランダム再生成</button><button id="start" class="primary">対局開始</button><button id="resign">投了</button><button id="back">戻る</button><button id="next">進む</button></div>
-<div id="status" role="status">初期化中</div><div id="notice"></div>
+<div id="status" role="status">初期化中</div><div id="notice" role="status"></div>
 <div class="actions"><button id="saveCsv">棋譜CSV出力</button><button id="saveKjf">KJF v1.0出力</button></div>
 </section></main>
 <footer>参考・関連プロジェクト：<a href="https://licheng.sakura.ne.jp/webkc/">WebKC</a> ／ <a href="https://dnjiro.hatenablog.com/entry/keisi#p7">形四のルールと形四スタジアム</a> ／ <a href="https://github.com/yasushi00/keishi-kjf">KJF v1.0</a> ／ <a href="https://github.com/yasushi00/keishi-replay">Keishi Replay</a> ／ <a href="https://yasushi00.github.io/keishi-replay/">棋譜再生サイト</a>。この画面は独立実装です。Rust7はCLI比較専用です。</footer>
