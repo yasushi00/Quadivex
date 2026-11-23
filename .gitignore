@@ -1,6 +1,7 @@
 .DS_Store
 node_modules/
 legacy_rust/
+.local-reference/
 tests/official_96_positions.json
 tests/results*/
 *.log

@@ -42,11 +42,35 @@ export function matchHeader(startedAt,endedAt,extra={}){
 export class MatchSession {
  constructor(opening,side,engine){this.opening=opening;this.side=side;this.engine=engine;const b=new Board();b.reset_with(opening.b,opening.w);this.history=[b];this.cursor=0;this.startedAt=null;this.endedAt=null;this.reason='playing';this.winner=null;}
  get active(){return this.startedAt!==null&&this.reason==='playing';}
+ get atLatest(){return this.cursor===this.history.length-1;}
+ get canApply(){return this.startedAt!==null&&(!this.atLatest||this.active);}
  get board(){return this.history.at(-1);}
  get display(){return this.history[this.cursor];}
  start(){if(this.startedAt)throw Error('Already started');this.startedAt=new Date().toISOString();this.check();}
  end(reason,winner=null){this.reason=reason;this.winner=winner;this.endedAt=new Date().toISOString();}
- check(){const r=outcome(this.board,this.history.length-1);if(r.reason!=='playing')this.end(r.reason,r.winner);}
- apply(m){if(!this.active||this.cursor!==this.history.length-1)throw Error('Not at live position');const b=this.board.clone_js();b.do_move(m);this.history.push(b);this.cursor=this.history.length-1;this.check();}
+ back(){
+  while(this.cursor>0){
+   this.cursor--;
+   if(this.display.turn===this.side)break;
+  }
+ }
+ next(){if(!this.atLatest)this.cursor++;}
+ check(){
+  const {reason,winner}=outcome(this.board,this.history.length-1);
+  if(reason==='playing'){
+   this.reason=reason;
+   this.winner=null;
+   this.endedAt=null;
+  }else this.end(reason,winner);
+ }
+ apply(m){
+  if(!this.canApply)throw Error('Not at a playable position');
+  const b=this.display.clone_js();
+  b.do_move(m);
+  this.history.length=this.cursor+1;
+  this.history.push(b);
+  this.cursor++;
+  this.check();
+ }
  exportGame(){return {snapshots:this.history,ply:this.history.length-1,startingColor:'B',stoneOrders:this.opening.orders,reason:this.reason,winner:this.winner};}
 }
